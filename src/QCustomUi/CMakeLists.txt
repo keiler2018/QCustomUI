@@ -97,6 +97,13 @@ set(INPUT_SOURCES
  "QCtmRangeSlider.cpp"
 )
 
+set(AXIS_HEADERS
+    "AxisControl.h"
+)
+set(AXIS_SOURCES
+    "AxisControl.cpp"
+)
+
 set(CONTAINERS_HEADERS
  "QCtmDialog.h"
  "QCtmWindow.h"
@@ -225,6 +232,7 @@ source_group("Headers" FILES ${HEADERS})
 source_group("Headers/Log" FILES ${LOG_HEADERS})
 source_group("Headers/Private" FILES ${PRIVATRE_HEADERS})
 source_group("Headers/Input" FILES ${INPUT_HEADERS})
+source_group("Headers/Axis" FILES ${AXIS_HEADERS})
 source_group("Headers/Containers" FILES ${CONTAINERS_HEADERS})
 source_group("Headers/MessageTip" FILES ${MESSAGETIP_HEADERS})
 source_group("Headers/Display Widgets" FILES ${DISPLAYWIDGETS_HEADERS})
@@ -236,6 +244,7 @@ source_group("Sources" FILES ${SOURCES})
 source_group("Sources/Log" FILES ${LOG_SOURCES})
 source_group("Sources/Private" FILES ${PRIVATRE_SOURCES})
 source_group("Sources/Input" FILES ${INPUT_SOURCES})
+source_group("Sources/Axis" FILES ${AXIS_SOURCES})
 source_group("Sources/Containers" FILES ${CONTAINERS_SOURCES})
 source_group("Sources/MessageTip" FILES ${MESSAGETIP_SOURCES})
 source_group("Sources/Display Widgets" FILES ${DISPLAYWIDGETS_SOURCES})
@@ -258,6 +267,7 @@ add_library(${TARGET_NAME} ${_QCUSTOMUI_OPTION}
  ${PRIVATRE_HEADERS}
  ${LOG_HEADERS}
  ${INPUT_HEADERS}
+ ${AXIS_HEADERS}
  ${CONTAINERS_HEADERS}
  ${MESSAGETIP_HEADERS}
  ${DISPLAYWIDGETS_HEADERS}
@@ -270,6 +280,7 @@ add_library(${TARGET_NAME} ${_QCUSTOMUI_OPTION}
  ${LOG_SOURCES}
  ${CONTAINERS_SOURCES}
  ${INPUT_SOURCES}
+ ${AXIS_SOURCES}
  ${MESSAGETIP_SOURCES}
  ${DISPLAYWIDGETS_SOURCES}
  ${VIEW_SOURCES}

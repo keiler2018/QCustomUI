@@ -69,4 +69,6 @@ void LogExample::init()
     // only write to log file.
     qDebug() << "Debug message";
     qInfo() << "Info message 2";
+
+    qInfo() << "#MyLog";
 }
