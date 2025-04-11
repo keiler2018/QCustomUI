@@ -18,9 +18,9 @@ FetchContent_MakeAvailable(pegtl)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 if(${QT_VERSION_MAJOR} EQUAL 5)
-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network WinExtras SerialPort REQUIRED)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network WinExtras SerialPort   REQUIRED)
 else(${QT_VERSION_MAJOR} EQUAL 5)
-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network SerialPort REQUIRED)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network SerialPort REQUIRE D)
 endif(${QT_VERSION_MAJOR} EQUAL 5)
 file(REAL_PATH "${QT_DIR}/../../.." QTDIR)
 message("-- Found Qt ${QT_VERSION}")
@@ -81,6 +81,7 @@ set(INPUT_HEADERS
  "QCtmHexLineEdit.h"
  "QCtmSerialPortComboBox.h"
  "QCtmRangeSlider.h"
+ "UnitLineEdit.h"
 )
 
 set(INPUT_SOURCES
@@ -154,6 +155,7 @@ set(DISPLAYWIDGETS_HEADERS
  "QCtmNavigationBar.h"
  "QCtmTitleBar.h"
  "QCtmCircleProgressBar.h"
+ "VideoPreview.h"
 )
 set(DISPLAYWIDGETS_SOURCES
  "QCtmEditLabel.cpp"
@@ -163,6 +165,7 @@ set(DISPLAYWIDGETS_SOURCES
  "QCtmNavigationBar.cpp"
  "QCtmTitleBar.cpp"
  "QCtmCircleProgressBar.cpp"
+ "VideoPreview.cpp"
 )
 
 set(VIEW_HEADERS
@@ -300,7 +303,7 @@ if(WIN32)
         target_link_libraries(${TARGET_NAME} PUBLIC dwmapi PRIVATE Qt::Widgets Qt::Network Qt::WidgetsPrivate Qt::SerialPort taocpp::pegtl)
     endif(${QT_VERSION_MAJOR} EQUAL 5)
 else ()
-    target_link_libraries(${TARGET_NAME} PRIVATE Qt::Widgets Qt::Network Qt::WidgetsPrivate Qt::SerialPort taocpp::pegtl)
+    target_link_libraries(${TARGET_NAME} PRIVATE Qt::Widgets Qt::Network Qt::WidgetsPrivate Qt::SerialPort taocpp::pegtl Qt::OpenGLWidgets)
 endif(WIN32)
 set_target_properties(${TARGET_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 1)
 

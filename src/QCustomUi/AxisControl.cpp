@@ -1,28 +1,12 @@
-﻿/*********************************************************************************
-**                                                                              **
-**  Copyright (C) 2019-2025 LiLong                                              **
-**  This file is part of QCustomUi.                                             **
-**                                                                              **
-**  QCustomUi is free software: you can redistribute it and/or modify           **
-**  it under the terms of the GNU Lesser General Public License as published by **
-**  the Free Software Foundation, either version 3 of the License, or           **
-**  (at your option) any later version.                                         **
-**                                                                              **
-**  QCustomUi is distributed in the hope that it will be useful,                **
-**  but WITHOUT ANY WARRANTY; without even the implied warranty of              **
-**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               **
-**  GNU Lesser General Public License for more details.                         **
-**                                                                              **
-**  You should have received a copy of the GNU Lesser General Public License    **
-**  along with QCustomUi.  If not, see <https://www.gnu.org/licenses/>.         **
-**********************************************************************************/
-#include "QCtmPathBrowser.h"
+﻿#include "AxisControl.h"
 
 #include <QHoverEvent>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOption>
+#include <QHboxLayout>
 
 struct PathNode
 {
@@ -30,7 +14,7 @@ struct PathNode
     QRect rect;
 };
 
-struct QCtmPathBrowser::Impl
+struct AxisControl::Impl
 {
     QString path;
     std::vector<PathNode> nodes;
@@ -40,6 +24,17 @@ struct QCtmPathBrowser::Impl
     int spliterWidth { 18 };
     int hoverNode { -1 };
     QLineEdit* editor { nullptr };
+
+    QPushButton* yUpButton;
+    QPushButton* yDownButton;
+    QPushButton* xLeftButton;
+    QPushButton* xRightButton;
+    QPushButton* homeButton;
+
+    QPushButton* zUpButton;
+    QPushButton* zDownButton;
+
+    ///x/y/z 绝对位置
 };
 
 /*!
@@ -54,24 +49,27 @@ struct QCtmPathBrowser::Impl
 /*!
     \brief      构造函数 \a parent.
 */
-QCtmPathBrowser::QCtmPathBrowser(QWidget* parent /*= nullptr*/) : QWidget(parent), m_impl(std::make_unique<Impl>())
+AxisControl::AxisControl(QWidget* parent /*= nullptr*/) : QWidget(parent), m_impl(std::make_unique<Impl>())
 {
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed, QSizePolicy::LineEdit));
     m_impl->textOption.setAlignment(Qt::AlignCenter);
     setAttribute(Qt::WA_Hover);
     setLineEdit(new QLineEdit(this));
+
+
+
 }
 
 /*!
     \brief      析构函数.
 */
-QCtmPathBrowser::~QCtmPathBrowser() {}
+AxisControl::~AxisControl() {}
 
 /*!
     \brief      设置显示路径 \a path.
     \sa         path
 */
-void QCtmPathBrowser::setPath(QString path)
+void AxisControl::setPath(QString path)
 {
     auto tmp = path.replace("\\", "/");
     if (tmp == m_impl->path)
@@ -85,25 +83,25 @@ void QCtmPathBrowser::setPath(QString path)
     \brief      返回显示路径.
     \sa         setPath
 */
-QString QCtmPathBrowser::path() const { return m_impl->path; }
+QString AxisControl::path() const { return m_impl->path; }
 
 /*!
     \brief      设置是否只读 \a flag.
     \sa         readOnly
 */
-void QCtmPathBrowser::setReadOnly(bool flag) { m_impl->readOnly = flag; }
+void AxisControl::setReadOnly(bool flag) { m_impl->readOnly = flag; }
 
 /*!
     \brief      返回是否只读.
     \sa         setReadOnly
 */
-bool QCtmPathBrowser::readOnly() const { return m_impl->readOnly; }
+bool AxisControl::readOnly() const { return m_impl->readOnly; }
 
 /*!
     \brief      设置自定义的文本编辑器 \a editor.
     \sa         lineEdit
 */
-void QCtmPathBrowser::setLineEdit(QLineEdit* editor)
+void AxisControl::setLineEdit(QLineEdit* editor)
 {
     Q_ASSERT(editor);
     if (m_impl->editor)
@@ -125,12 +123,12 @@ void QCtmPathBrowser::setLineEdit(QLineEdit* editor)
     \brief      返回文本编辑器.
     \sa         setLineEdit
 */
-QLineEdit* QCtmPathBrowser::lineEdit() const { return m_impl->editor; }
+QLineEdit* AxisControl::lineEdit() const { return m_impl->editor; }
 
 /*!
     \reimp
 */
-void QCtmPathBrowser::paintEvent(QPaintEvent* event)
+void AxisControl::paintEvent(QPaintEvent* event)
 {
     QStyleOptionFrame opt;
     initStyleOption(&opt);
@@ -162,12 +160,12 @@ void QCtmPathBrowser::paintEvent(QPaintEvent* event)
 /*!
     \reimp
 */
-QSize QCtmPathBrowser::sizeHint() const { return minimumSizeHint(); }
+QSize AxisControl::sizeHint() const { return minimumSizeHint(); }
 
 /*!
     \reimp
 */
-QSize QCtmPathBrowser::minimumSizeHint() const
+QSize AxisControl::minimumSizeHint() const
 {
     ensurePolished();
     const auto& fm      = fontMetrics();
@@ -181,7 +179,7 @@ QSize QCtmPathBrowser::minimumSizeHint() const
 /*!
     \reimp
 */
-void QCtmPathBrowser::resizeEvent(QResizeEvent* event)
+void AxisControl::resizeEvent(QResizeEvent* event)
 {
     if (event->oldSize().height() != event->size().height())
         generatorNodes();
@@ -195,7 +193,7 @@ void QCtmPathBrowser::resizeEvent(QResizeEvent* event)
 /*!
     \reimp
 */
-void QCtmPathBrowser::mousePressEvent(QMouseEvent* event)
+void AxisControl::mousePressEvent(QMouseEvent* event)
 {
     if (m_impl->hoverNode == -1 && !m_impl->readOnly)
     {
@@ -208,7 +206,7 @@ void QCtmPathBrowser::mousePressEvent(QMouseEvent* event)
 /*!
     \reimp
 */
-void QCtmPathBrowser::mouseReleaseEvent(QMouseEvent* event)
+void AxisControl::mouseReleaseEvent(QMouseEvent* event)
 {
     if (m_impl->hoverNode != -1)
     {
@@ -226,7 +224,7 @@ void QCtmPathBrowser::mouseReleaseEvent(QMouseEvent* event)
 /*!
     \reimp
 */
-bool QCtmPathBrowser::eventFilter(QObject* watched, QEvent* event)
+bool AxisControl::eventFilter(QObject* watched, QEvent* event)
 {
     if (watched == m_impl->editor)
     {
@@ -250,7 +248,7 @@ bool QCtmPathBrowser::eventFilter(QObject* watched, QEvent* event)
 /*!
     \reimp
 */
-bool QCtmPathBrowser::event(QEvent* e)
+bool AxisControl::event(QEvent* e)
 {
     if (e->type() == QEvent::HoverMove)
     {
@@ -286,7 +284,7 @@ bool QCtmPathBrowser::event(QEvent* e)
     return QWidget::event(e);
 }
 
-void QCtmPathBrowser::generatorNodes()
+void AxisControl::generatorNodes()
 {
     QStyleOptionFrame opt;
     initStyleOption(&opt);
@@ -313,7 +311,7 @@ void QCtmPathBrowser::generatorNodes()
 /*!
     \brief      初始化样式选项 \a option.
 */
-void QCtmPathBrowser::initStyleOption(QStyleOptionFrame* option) const
+void AxisControl::initStyleOption(QStyleOptionFrame* option) const
 {
     if (!option)
         return;
@@ -331,7 +329,7 @@ void QCtmPathBrowser::initStyleOption(QStyleOptionFrame* option) const
 /*!
     \brief      取消编辑操作.
 */
-void QCtmPathBrowser::cancelEditor()
+void AxisControl::cancelEditor()
 {
     m_impl->editor->setText(m_impl->path);
     m_impl->editor->hide();
