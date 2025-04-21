@@ -4,6 +4,8 @@
 #include <QCustomUi/QCtmLogWidget.h>
 #include <QCustomUi/QCtmTabPage.h>
 #include <QCustomUi/QCtmTabWidget.h>
+#include <QCustomUi/VideoPreview.h>
+#include <QCustomUi/AxisControl.h>
 
 #include <QDebug>
 #include <QImage>
@@ -57,6 +59,13 @@ void LogExample::init()
     btn->setIcon(QPixmap::fromImage(QImage(xpmImage)));
     connect(btn, &QToolButton::clicked, this, [=]() { tabWidget->setVisible(!tabWidget->isVisible()); });
 
+    VideoPreview* videoPreview = new VideoPreview(this);
+    tabWidget->addTab(videoPreview, "Video Preview");
+    videoPreview->setShowCrosshair(true);
+
+    auto *axisControl = new AxisControl(this);
+    tabWidget->addTab(axisControl, "Axis Control");
+
     // [5] show your logs
     // show on QCtmLogWidget and write to log file.
     qInfo() << "#MyLog"
@@ -70,5 +79,6 @@ void LogExample::init()
     qDebug() << "Debug message";
     qInfo() << "Info message 2";
 
-    qInfo() << "#MyLog";
+    qInfo() << "#MyLog"
+     << "中心十字线 可以了";
 }
